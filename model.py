@@ -8,7 +8,7 @@ from keras.layers import Dense
 from keras.layers import Dropout
 from keras.layers import Flatten
 from keras.layers.convolutional import Conv2D
-from keras.layers.convolutional import MaxPooling2D
+from keras.layers.convolutional import MaxPooling2D, AveragePooling2D
 from keras.utils import np_utils
 from keras.callbacks import ModelCheckpoint
 from keras import backend as K
@@ -17,27 +17,41 @@ K.image_data_format()
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 def get_image_size():
-	img = cv2.imread('gesturess/1/30.jpg', 0)
+	img = cv2.imread('new_gest/1/30.jpg', 0)
 	return img.shape
 
 def get_num_of_classes():
-	return len(glob('gesturess/*'))
+	return len(glob('new_gest/*'))
 
 image_x, image_y = get_image_size()
 
 def cnn_model():
 	num_of_classes = get_num_of_classes()
+	#Instantiate an empty model
 	model = Sequential()
-	model.add(Conv2D(16, (2,2), input_shape=(image_x, image_y, 1), activation='relu'))
-	model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding='same'))
-	model.add(Conv2D(32, (3,3), activation='relu'))
-	model.add(MaxPooling2D(pool_size=(3, 3), strides=(3, 3), padding='same'))
-	model.add(Conv2D(64, (5,5), activation='relu'))
-	model.add(MaxPooling2D(pool_size=(5, 5), strides=(5, 5), padding='same'))
+
+	# C1 Convolutional Layer
+	model.add(Conv2D(6, kernel_size=(5, 5), strides=(1, 1), activation='tanh', input_shape=(image_x,image_y,1), padding='same'))
+
+	# S2 Pooling Layer
+	model.add(AveragePooling2D(pool_size=(2, 2), strides=(1, 1), padding='valid'))
+
+	# C3 Convolutional Layer
+	model.add(Conv2D(16, kernel_size=(5, 5), strides=(1, 1), activation='tanh', padding='valid'))
+
+	# S4 Pooling Layer
+	model.add(AveragePooling2D(pool_size=(2, 2), strides=(2, 2), padding='valid'))
+
+	# C5 Fully Connected Convolutional Layer
+	model.add(Conv2D(120, kernel_size=(5, 5), strides=(1, 1), activation='tanh', padding='valid'))
+	#Flatten the CNN output so that we can connect it with fully connected layers
 	model.add(Flatten())
-	model.add(Dense(128, activation='relu'))
-	model.add(Dropout(0.2))
-	model.add(Dense(num_of_classes, activation='softmax'))
+
+	# FC6 Fully Connected Layer
+	model.add(Dense(84, activation='tanh'))
+
+	#Output Layer with softmax activation
+	model.add(Dense(num_of_classes, activation='softmax')) 
 	sgd = optimizers.SGD(lr=1e-2)
 	model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
 	filepath="cnn_model_keras2.h5"

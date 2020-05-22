@@ -18,7 +18,7 @@ def get_hand_hist():
 	return hist
 
 def get_image_size():
-	img = cv2.imread('gesturess/0/100.jpg', 0)
+	img = cv2.imread('new_gest/0/100.jpg', 0)
 	return img.shape
 
 image_x, image_y = get_image_size()
@@ -36,7 +36,7 @@ def keras_predict(model, image):
 	return max(pred_probab), pred_class
 
 def get_pred_text_from_db(pred_class):
-	conn = sqlite3.connect("gesture_db.db")
+	conn = sqlite3.connect("gesture_db2.db")
 	cmd = "SELECT g_name FROM gesture WHERE g_id="+str(pred_class)
 	cursor = conn.execute(cmd)
 	for row in cursor:
@@ -53,7 +53,7 @@ def get_pred_from_contour(contour, thresh):
 	pred_probab, pred_class = keras_predict(model, save_img)
 	print("pred_probab is ", pred_probab)
 	print("pred class is ",pred_class)
-	if pred_probab*100 > 95:
+	if pred_probab*100 > 90:
 		text = get_pred_text_from_db(pred_class)
 	return text
 
@@ -202,14 +202,14 @@ def calculator_mode(cam):
 							calc_text += pred_text
 							count_same_frames = 0	
 
-		if count_clear_frames == 30:
+		if count_clear_frames == 20:
 			first, second, operator, pred_text, calc_text = '', '', '', '', ''
 			flag['first'], flag['operator'], flag['second'], flag['clear'] = False, False, False, False
 			info = "Enter first number"
 			Thread(target=say_text, args=(info,)).start()
 			count_clear_frames = 0
 
-		blackboard = np.zeros((480, 640, 3), dtype=np.uint8)
+		blackboard = np.zeros((800, 640, 3), dtype=np.uint8)
 		cv2.putText(blackboard, "Calculator Mode", (100, 50), cv2.FONT_HERSHEY_TRIPLEX, 1.5, (255, 0,0))
 		cv2.putText(blackboard, "Predicted text- " + pred_text, (30, 100), cv2.FONT_HERSHEY_TRIPLEX, 1, (255, 255, 0))
 		cv2.putText(blackboard, "Operator " + operator, (30, 140), cv2.FONT_HERSHEY_TRIPLEX, 1, (255, 255, 127))

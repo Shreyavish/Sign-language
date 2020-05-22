@@ -8,7 +8,7 @@ import os
 
 def pickle_images_labels():
 	images_labels = []
-	images = glob("gesturess/*/*.jpg")
+	images = glob("new_gest/*/*.jpg")
 	images.sort()
 	for image in images:
 		print(image)

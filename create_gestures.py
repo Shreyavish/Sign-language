@@ -10,17 +10,17 @@ def get_hand_hist():
 	return hist
 
 
-#my code to delete and view  a table created in database "gesture_db"
+#my code to delete and view  a table created in database "gesture_db2"
 #put this is comment line unless creating a new table 
 def delete_table():
-		conn = sqlite3.connect("gesture_db.db")
+		conn = sqlite3.connect("gesture_db2.db")
 		drop_table_cmd = "DROP TABLE gesture"
 		conn.execute(drop_table_cmd)
 		conn.commit()
 		print("done")
 
 def view_table():
-		conn = sqlite3.connect("gesture_db.db")
+		conn = sqlite3.connect("gesture_db2.db")
 		view_table_cmd = "SELECT * FROM gesture"
 		conn.execute(view_table_cmd)
 		conn.commit()
@@ -42,10 +42,10 @@ def view_table():
 
 def init_create_folder_database():
 	# create the folder and database if not exist
-	if not os.path.exists("gesturess"):
-		os.mkdir("gesturess")
-	if not os.path.exists("gesture_db.db"):
-		conn = sqlite3.connect("gesture_db.db")
+	if not os.path.exists("new_gest"):
+		os.mkdir("new_gest")
+	if not os.path.exists("gesture_db2.db"):
+		conn = sqlite3.connect("gesture_db2.db")
 		create_table_cmd = "CREATE TABLE gesture ( g_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, g_name TEXT NOT NULL )"
 		conn.execute(create_table_cmd)
 		conn.commit()
@@ -55,7 +55,7 @@ def create_folder(folder_name):
 		os.mkdir(folder_name)
 
 def store_in_db(g_id, g_name):
-	conn = sqlite3.connect("gesture_db.db")
+	conn = sqlite3.connect("gesture_db2.db")
 	cmd = "INSERT INTO gesture (g_id, g_name) VALUES (%s, \'%s\')" % (g_id, g_name)
 	try:
 		conn.execute(cmd)
@@ -77,7 +77,7 @@ def store_images(g_id):
 		cam = cv2.VideoCapture(0)
 	x, y, w, h = 300, 100, 300, 300
 
-	create_folder("gesturess/"+str(g_id))
+	create_folder("new_gest/"+str(g_id))
 	pic_no = 0
 	flag_start_capturing = False
 	frames = 0
@@ -112,7 +112,7 @@ def store_images(g_id):
 				if rand % 2 == 0:
 					save_img = cv2.flip(save_img, 1)
 				cv2.putText(img, "Capturing...", (30, 60), cv2.FONT_HERSHEY_TRIPLEX, 2, (127, 255, 255))
-				cv2.imwrite("gesturess/"+str(g_id)+"/"+str(pic_no)+".jpg", save_img)
+				cv2.imwrite("new_gest/"+str(g_id)+"/"+str(pic_no)+".jpg", save_img)
 
 		cv2.rectangle(img, (x,y), (x+w, y+h), (0,255,0), 2)
 		cv2.putText(img, str(pic_no), (30, 400), cv2.FONT_HERSHEY_TRIPLEX, 1.5, (127, 127, 255))

@@ -7,8 +7,8 @@ def build_squares(img):
 	d = 10
 	imgCrop = None
 	crop = None
-	for i in range(15):
-		for j in range(5):
+	for i in range(12):
+		for j in range(6):
 			if np.any(imgCrop == None):
 				imgCrop = img[y:y+h, x:x+w]
 			else:
